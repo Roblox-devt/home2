@@ -60,39 +60,6 @@
             transform-origin: left center;
         }
 
-        /* --- Loading Screen Styles --- */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #FFFFFF;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease, visibility 0.5s;
-        }
-
-        .roblox-logo-load {
-            max-width: 250px;
-            width: auto;
-            height: auto;
-            opacity: 0;
-            animation: fadeInLogo 1s ease forwards 0.3s;
-        }
-
-        @keyframes fadeInLogo {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
 
         /* --- Main App Layout Styles --- */
         .side-dock {
@@ -1942,10 +1909,6 @@
         </div>
     </div>
 
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <img src="https://mms.businesswire.com/media/20260709302210/en/1572614/22/Roblox_Logo_2022-1.jpg" class="roblox-logo-load" alt="Roblox Logo">
-    </div>
 
     <!-- Search Overlay (Click out to close) -->
     <div id="search-overlay" onclick="closeSearch()"></div>
@@ -4621,12 +4584,6 @@
             // Make sure search bar is visible on initial load (Home)
             document.getElementById('search-container').style.display = 'block';
 
-            setTimeout(() => {
-                const loadingScreen = document.getElementById('loading-screen');
-                if (loadingScreen) {
-                    loadingScreen.classList.add('fade-out');
-                }
-            }, 2500);
         }
 
         if (document.readyState === 'loading') {
