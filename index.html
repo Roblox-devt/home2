@@ -36,15 +36,28 @@
         body.light-theme .game-thumbnail-frame {
             filter: invert(1) hue-rotate(180deg);
         }
-        body.light-theme .home-logo-img {
-            content: url("https://1000logos.net/wp-content/uploads/2017/09/Roblox-Logo.png");
-            filter: none; 
+        /* Keep loading screen normal in light mode */
+        body.light-theme #loading-screen {
+            background-color: #000000 !important; /* Inverts to white via the container filter */
+            filter: invert(1) hue-rotate(180deg) !important; /* Counter-invert the container */
         }
-        body.light-theme .detail-play-btn,
+        body.light-theme #loading-screen .roblox-logo-load {
+            filter: invert(1) hue-rotate(180deg) !important; /* Double invert the image to restore original colors */
+        }        body.light-theme .detail-play-btn,
         body.light-theme .phone-detail-play-btn,
-        body.light-theme .settings-action-btn,
         body.light-theme .detail-fav-btn {
             filter: invert(1) hue-rotate(180deg);
+        }
+        /* Explicit button text color for light mode */
+        body.light-theme .settings-action-btn {
+            color: #000;
+            border-color: #000;
+            filter: invert(1) hue-rotate(180deg);
+        }
+        /* Scale up logo in light mode */
+        body.light-theme .home-logo-img {
+            transform: scale(2.5);
+            transform-origin: left center;
         }
 
         /* --- Loading Screen Styles --- */
@@ -149,6 +162,8 @@
             justify-content: center;
             align-items: center;
             border: 2px solid transparent;
+            background-size: cover;
+            background-position: center;
         }
 
         .avatar-head {
@@ -402,6 +417,17 @@
             }
         }
 
+        /* --- Tablet Home View Overrides --- */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #view-home .profile-row {
+                position: absolute;
+                top: 140px;
+                left: 40px;
+                right: auto;
+                z-index: 50;
+            }
+        }
+
         /* --- Charts Dropdowns --- */
         .dropdown-row {
             display: flex;
@@ -611,24 +637,48 @@
             padding: 40px;
         }
 
+        /* Recommended Section Grid (PC & Tablet) */
+        @media (min-width: 769px) {
+            .recommended-grid {
+                display: grid !important;
+                grid-template-columns: repeat(5, 1fr) !important;
+                gap: 15px !important;
+                overflow: hidden !important;
+                flex-wrap: wrap !important;
+                padding: 0 !important;
+                margin-left: 0 !important;
+            }
+            .recommended-grid .game-item-card {
+                width: 100% !important;
+            }
+            .recommended-grid .game-thumbnail-frame {
+                width: 100% !important;
+                height: 0 !important;
+                padding-bottom: 56.25% !important; /* 16:9 Aspect Ratio */
+                border-radius: 8px !important;
+            }
+        }
+
         /* --- Avatar Editor Layout --- */
         .avatar-editor-layout {
             display: flex;
             height: 100%;
             width: 100%;
             overflow: hidden;
-            transition: flex 0.3s ease;
         }
 
         .avatar-editor-left {
-            flex: 1;
+            flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0;
+            min-width: 0;
             background-color: #191B1D;
             padding: 30px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             border-right: 1px solid #2F3136;
-            transition: flex 0.3s ease, height 0.3s ease, padding 0.3s ease, border 0.3s ease;
+            transition: flex-grow 0.3s ease, flex-basis 0.3s ease, padding 0.3s ease, border 0.3s ease, height 0.3s ease;
         }
 
         .avatar-tab-strip {
@@ -767,10 +817,13 @@
         .hex-input-field:focus { border-color: #0084ff; }
 
         .avatar-editor-right {
-            flex: 1.5;
+            flex-grow: 1.5;
+            flex-shrink: 1;
+            flex-basis: 0;
+            min-width: 0;
             position: relative;
             background-color: #0E1011;
-            transition: flex 0.3s ease, height 0.3s ease;
+            transition: flex-grow 0.3s ease, flex-basis 0.3s ease, height 0.3s ease;
         }
 
         #avatar-preview-container {
@@ -807,13 +860,17 @@
 
         /* Expanded states (PC/Tablet) */
         .avatar-editor-layout.preview-full .avatar-editor-left {
-            flex: 0;
+            flex-grow: 0;
+            flex-shrink: 1;
+            flex-basis: 0;
             padding: 0;
             border: none;
             overflow: hidden;
         }
         .avatar-editor-layout.preview-full .avatar-editor-right {
-            flex: 1;
+            flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0;
         }
 
         /* --- More Tab UI --- */
@@ -866,10 +923,13 @@
 
         .more-actions-row {
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            gap: 15px;
             justify-content: center;
             margin-top: 40px;
-            flex-wrap: wrap;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* --- More Tab Pop-up Overlays --- */
@@ -1522,8 +1582,9 @@
             color: #FFFFFF;
         }
         
+        /* Removed double invert to let it be black in light mode */
         body.light-theme.phone-mode #phone-menu-btn {
-            filter: invert(1) hue-rotate(180deg);
+            filter: none;
         }
 
         body.phone-mode #view-home .home-logo-img {
@@ -1695,18 +1756,18 @@
         }
 
         body.phone-mode #game-detail-overlay {
+            display: flex; /* Keep flex so transition works */
             top: auto;
             bottom: 0;
             left: 0;
             width: 100vw;
             height: 75vh;
             border-radius: 12px 12px 0 0;
-            display: flex;
             flex-direction: column;
             transform: translateY(100%);
-            transition: transform 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+            transition: transform 0.3s ease-out, height 0.3s ease, border-radius 0.3s ease;
             z-index: 90;
-            pointer-events: none;
+            pointer-events: none; /* Prevents the "blank pop-up" bug */
         }
         body.phone-mode #game-detail-overlay.active {
             transform: translateY(0);
@@ -1785,7 +1846,9 @@
             flex-direction: column;
         }
         body.phone-mode .avatar-editor-left {
-            flex: none;
+            flex-grow: 0;
+            flex-shrink: 1;
+            flex-basis: 50%;
             height: 50%;
             border-right: none;
             border-top: 1px solid #2F3136;
@@ -1793,7 +1856,9 @@
             transition: height 0.3s ease, padding 0.3s ease, border 0.3s ease;
         }
         body.phone-mode .avatar-editor-right {
-            flex: none;
+            flex-grow: 0;
+            flex-shrink: 1;
+            flex-basis: 50%;
             height: 50%;
             order: 1;
             transition: height 0.3s ease;
@@ -1837,7 +1902,7 @@
     <div id="phone-side-menu-overlay" onclick="closePhoneMenu()"></div>
     <div id="phone-side-menu">
         <div class="side-menu-header">
-            <div class="avatar-circle profile-avatar side-menu-avatar">
+            <div class="avatar-circle profile-avatar side-menu-avatar pfp-target">
                 <div class="avatar-head" style="width: 16px; height: 16px; top: 8px;"></div>
                 <div class="avatar-body" style="width: 32px; height: 24px; bottom: -3px;"></div>
             </div>
@@ -1927,7 +1992,7 @@
 
         <div class="nav-item" id="tab-avatar" onclick="switchView('avatar')">
             <div class="icon">
-                <div class="avatar-circle">
+                <div class="avatar-circle pfp-target">
                     <div class="avatar-head"></div>
                     <div class="avatar-body"></div>
                 </div>
@@ -1965,7 +2030,7 @@
                     <img src="https://www.edigitalagency.com.au/wp-content/uploads/new-Roblox-logo-white-png-large-size.png" alt="Roblox Logo" class="home-logo-img">
                 </div>
                 <div class="profile-row">
-                    <div class="avatar-circle profile-avatar">
+                    <div class="avatar-circle profile-avatar pfp-target">
                         <div class="avatar-head"></div>
                         <div class="avatar-body"></div>
                     </div>
@@ -2158,7 +2223,7 @@
                 <!-- Action Buttons -->
                 <div class="more-actions-row">
                     <button id="switch-acc-btn" class="settings-action-btn" onclick="openSwitchAccModal()" style="display: none;">Switch Accounts</button>
-                    <button id="exit-btn" class="settings-action-btn" style="display: none; border-color: #ff3333; color: #ff3333;" onclick="window.close();">Exit</button>
+                    <button id="exit-btn" class="settings-action-btn" style="display: none;">Exit</button>
                 </div>
             </div>
         </div>
@@ -2171,7 +2236,7 @@
                 </div>
             </div>
             <div class="content-body">
-                <div id="search-results-grid" class="games-grid-display"></div>
+                <div id="search-results-grid" class="games-grid-display recommended-grid"></div>
             </div>
         </div>
     </div>
@@ -2228,6 +2293,10 @@
                     <input type="text" id="settings-username" class="settings-input" placeholder="Enter username">
                 </div>
                 <div class="settings-field">
+                    <label for="settings-pfp">Profile Picture URL</label>
+                    <input type="text" id="settings-pfp" class="settings-input" placeholder="Enter image link">
+                </div>
+                <div class="settings-field">
                     <label for="theme-select">Device theme</label>
                     <select id="theme-select" class="settings-select">
                         <option value="Dark">Dark</option>
@@ -2247,7 +2316,7 @@
             <div class="switch-acc-title">Switch Accounts</div>
             
             <div class="switch-acc-row" onclick="closeSwitchAccModal()">
-                <div class="avatar-circle profile-avatar switch-acc-avatar">
+                <div class="avatar-circle profile-avatar switch-acc-avatar pfp-target">
                     <div class="avatar-head" style="width: 14px; height: 14px; top: 6px;"></div>
                     <div class="avatar-body" style="width: 26px; height: 20px; bottom: -2px;"></div>
                 </div>
@@ -2261,7 +2330,7 @@
             </div>
 
             <div class="switch-acc-row" onclick="window.location.href='https://www.roblox.com/login'">
-                <div class="avatar-circle profile-avatar switch-acc-avatar" style="background: #333;">
+                <div class="avatar-circle profile-avatar switch-acc-avatar pfp-target" style="background: #333;">
                     <div class="avatar-head" style="width: 14px; height: 14px; top: 6px; background: #555;"></div>
                     <div class="avatar-body" style="width: 26px; height: 20px; bottom: -2px; background: #555;"></div>
                 </div>
@@ -2272,7 +2341,7 @@
             </div>
 
             <div class="switch-acc-row" onclick="window.location.href='https://www.roblox.com/login'">
-                <div class="avatar-circle profile-avatar switch-acc-avatar" style="background: #333;">
+                <div class="avatar-circle profile-avatar switch-acc-avatar pfp-target" style="background: #333;">
                     <div class="avatar-head" style="width: 14px; height: 14px; top: 6px; background: #555;"></div>
                     <div class="avatar-body" style="width: 26px; height: 20px; bottom: -2px; background: #555;"></div>
                 </div>
@@ -2283,7 +2352,7 @@
             </div>
 
             <div class="switch-acc-row" onclick="window.location.href='https://www.roblox.com/login'">
-                <div class="avatar-circle profile-avatar switch-acc-avatar" style="background: #333;">
+                <div class="avatar-circle profile-avatar switch-acc-avatar pfp-target" style="background: #333;">
                     <div class="avatar-head" style="width: 14px; height: 14px; top: 6px; background: #555;"></div>
                     <div class="avatar-body" style="width: 26px; height: 20px; bottom: -2px; background: #555;"></div>
                 </div>
@@ -2294,7 +2363,7 @@
             </div>
 
             <div class="switch-acc-row" onclick="window.location.href='https://www.roblox.com/login'">
-                <div class="avatar-circle profile-avatar switch-acc-avatar" style="background: #333;">
+                <div class="avatar-circle profile-avatar switch-acc-avatar pfp-target" style="background: #333;">
                     <div class="avatar-head" style="width: 14px; height: 14px; top: 6px; background: #555;"></div>
                     <div class="avatar-body" style="width: 26px; height: 20px; bottom: -2px; background: #555;"></div>
                 </div>
@@ -2418,7 +2487,8 @@
             </div>
         </div>
 
-        <div style="display: flex; width: 100%; gap: 10px; padding: 0 15px 20px 15px; box-sizing: border-box;">
+        <!-- Added padding to clear bottom tab bar -->
+        <div style="display: flex; width: 100%; gap: 10px; padding: 0 15px 80px 15px; box-sizing: border-box;">
             <button class="phone-detail-play-btn" onclick="handlePlayClick()">
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="#FFFFFF"><path d="M8 5v14l11-7z"></path></svg>
             </button>
@@ -2517,8 +2587,8 @@
                     { title: "Friend Game 3", iconUrl: "", likePercent: "95%", playerCount: "7.1K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
                     { title: "Friend Game 4", iconUrl: "", likePercent: "88%", playerCount: "4.5K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
                     { title: "Friend Game 5", iconUrl: "", likePercent: "91%", playerCount: "6.3K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
-                    { title: "Friend Game 6", iconUrl: "", likePercent: "87%", playerCount: "3.2K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
-                    { title: "Friend Game 7", iconUrl: "", likePercent: "93%", playerCount: "5.8K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
+                    { title: "Build a Hideout and Sword Fight", iconUrl: "https://tr.rbxcdn.com/180DAY-dfbe08b3593f6f3092d52fab93cdd316/256/256/Image/Webp/noFilter", likePercent: "80%", playerCount: "14", bannerUrl: "https://tr.rbxcdn.com/180DAY-6b34b9ac99bd28ea907f1d88c6c18bfd/768/432/Image/Webp/noFilter", creator: "Build | Official", maturity: "Maturity: Mild", playLink: "https://roblox-devt.github.io/games-5332805908-Build-a-Hideout-and-Sword-Fight/", description: "Welcome to Build - an immersive game where your imagination comes to life! Unleash your creativity, battle opponents, and earn kills to unlock better gear!", visits: "27.2M+", contentMaturity: "Mild", developer: "Build | Official", serverSize: "9" },
+                    { title: "Sword Fighting Bot", iconUrl: "https://tr.rbxcdn.com/180DAY-3e43d42c42ac8c7774c0352f7b2a58da/256/256/Image/Webp/noFilter", likePercent: "80%", playerCount: "0", bannerUrl: "https://tr.rbxcdn.com/180DAY-4404a2ebd53da77923575f3f0fc17dc6/768/432/Image/Webp/noFilter", creator: "Auzer", maturity: "Maturity: Mild * Ages 16+", playLink: "https://roblox-devt.github.io/games-134991879-Sword-Fighting-Bot/", description: "", visits: "0", contentMaturity: "Mild", developer: "Auzer", serverSize: "20" },
                     { title: "Friend Game 8", iconUrl: "", likePercent: "90%", playerCount: "4.9K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
                     { title: "Friend Game 9", iconUrl: "", likePercent: "86%", playerCount: "2.7K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
                     { title: "Friend Game 10", iconUrl: "", likePercent: "94%", playerCount: "6.7K", bannerUrl: "", creator: "Creator", maturity: "Maturity: Mild * Ages 16+", playLink: "#", description: "", visits: "0", contentMaturity: "Mild", developer: "Creator", serverSize: "1" },
@@ -2761,8 +2831,10 @@
             if (id === 'popup-settings') {
                 const dispName = localStorage.getItem('roblox_display_name') || 'Player';
                 const usrName = localStorage.getItem('roblox_username') || 'Username';
+                const pfpUrl = localStorage.getItem('roblox_pfp') || '';
                 document.getElementById('settings-display-name').value = dispName;
                 document.getElementById('settings-username').value = usrName;
+                document.getElementById('settings-pfp').value = pfpUrl;
                 
                 const theme = localStorage.getItem('roblox_theme') || 'Dark';
                 document.getElementById('theme-select').value = theme;
@@ -2832,9 +2904,10 @@
                     card.className = "game-item-card";
                     card.setAttribute('onclick', `openGameDetail('${item.catKey}', ${item.gameIdx})`);
                     
-                    const iconStyle = game.iconUrl ? `background-image: url('${game.iconUrl}');` : `background-image: url('${PLACEHOLDER_ICON}');`;
+                    // Use banner for search results
+                    const bannerUrl = game.bannerUrl ? game.bannerUrl : PLACEHOLDER_BANNER;
                     card.innerHTML = `
-                        <div class="game-thumbnail-frame" style="${iconStyle}"></div>
+                        <div class="game-thumbnail-frame" style="background-image: url('${bannerUrl}');"></div>
                         <div class="game-title-text">${escapeHtml(game.title || "Game Title")}</div>
                         <div class="game-stats-row">
                             <div class="stat-indicator-group">
@@ -3013,14 +3086,13 @@
         function closeGameDetail() {
             document.getElementById('game-detail-overlay').classList.remove('active');
             document.getElementById('phone-detail-overlay-bg').classList.remove('active');
-            // Reset phone styles after close
-            setTimeout(() => {
-                if (document.body.classList.contains('phone-mode')) {
-                    document.getElementById('game-detail-overlay').style.height = '75vh';
-                    document.getElementById('game-detail-overlay').style.borderRadius = '12px 12px 0 0';
-                    document.getElementById('game-detail-overlay').style.transform = 'translateY(0)';
-                }
-            }, 300);
+            
+            // Clear inline styles to let CSS handle the close transition properly
+            const overlay = document.getElementById('game-detail-overlay');
+            overlay.style.transform = '';
+            overlay.style.height = '';
+            overlay.style.borderRadius = '';
+            overlay.style.transition = '';
         }
 
         function handleDetailScroll() {
@@ -3393,7 +3465,7 @@
             `
 
             const track = document.createElement('div');
-            track.className = "games-grid-display";
+            track.className = "games-grid-display recommended-grid";
             track.id = "track-id-recommended";
 
             gamesToShow.forEach(item => {
@@ -3489,9 +3561,26 @@
             document.getElementById('side-menu-username').innerText = '@' + usr;
         }
 
+        function applyProfilePicture() {
+            const pfpUrl = localStorage.getItem('roblox_pfp') || '';
+            const pfpElements = document.querySelectorAll('.pfp-target');
+            pfpElements.forEach(el => {
+                if (pfpUrl) {
+                    el.style.backgroundImage = `url('${pfpUrl}')`;
+                    el.style.backgroundColor = '#333';
+                    el.querySelectorAll('.avatar-head, .avatar-body').forEach(child => child.style.display = 'none');
+                } else {
+                    el.style.backgroundImage = 'none';
+                    el.style.backgroundColor = '#A3A3A3';
+                    el.querySelectorAll('.avatar-head, .avatar-body').forEach(child => child.style.display = 'block');
+                }
+            });
+        }
+
         function setupSettingsLogic() {
             const dispInput = document.getElementById('settings-display-name');
             const usrInput = document.getElementById('settings-username');
+            const pfpInput = document.getElementById('settings-pfp');
             const themeSelect = document.getElementById('theme-select');
 
             dispInput.addEventListener('input', () => {
@@ -3507,6 +3596,11 @@
                 updateSideMenuProfile();
             });
 
+            pfpInput.addEventListener('input', () => {
+                localStorage.setItem('roblox_pfp', pfpInput.value.trim());
+                applyProfilePicture();
+            });
+
             themeSelect.addEventListener('change', () => {
                 const theme = themeSelect.value;
                 localStorage.setItem('roblox_theme', theme);
@@ -3515,10 +3609,13 @@
         }
 
         function applyTheme(theme) {
+            const homeLogo = document.querySelector('.home-logo-img');
             if (theme === 'Light') {
                 document.body.classList.add('light-theme');
+                if (homeLogo) homeLogo.src = "https://1000logos.net/wp-content/uploads/2017/09/Roblox-Logo.png";
             } else {
                 document.body.classList.remove('light-theme');
+                if (homeLogo) homeLogo.src = "https://www.edigitalagency.com.au/wp-content/uploads/new-Roblox-logo-white-png-large-size.png";
             }
         }
 
@@ -3530,6 +3627,7 @@
             document.getElementById('username-display').innerText = dispName;
             
             updateSideMenuProfile();
+            applyProfilePicture();
         }
 
         // --- Username Edit Logic (Home page) ---
